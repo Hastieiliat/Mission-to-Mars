@@ -12,9 +12,7 @@ def scrape_all():
     browser = Browser('chrome', **executable_path, headless=True)
 
     news_title, news_paragraph = mars_news(browser)
-
-    img_url, title, hemisphere_image_urls = mars_hemispheres(browser)
-    print (img_url, title, hemisphere_image_urls)
+    img_url, title = mars_hemispheres(browser)
     # Run all scraping functions and store results in a dictionary
     data = {
         "news_title": news_title,
@@ -22,7 +20,7 @@ def scrape_all():
         "featured_image": featured_image(browser),
         "facts": mars_facts(),
         "last_modified": dt.datetime.now(),
-        "hemispheres" : hemisphere_image_urls
+        "hemisphere" : mars_hemispheres(browser)
     }
 
     # Stop webdriver and return data
@@ -100,14 +98,11 @@ def mars_facts():
     # Convert dataframe into HTML format, add bootstrap
     return df.to_html(classes="table table-striped")
 
-
 def mars_hemispheres(browser):
     url = 'https://marshemispheres.com/'
 
     browser.visit(url)
-
     hemisphere_image_urls = []
-
     results = browser.find_by_css('h3')
 
     for result in range(len(results[:-1])):
@@ -117,7 +112,7 @@ def mars_hemispheres(browser):
     
         title = browser.find_by_css('h2.title').text
     
-        hemispheres={
+        hemispheres = {
         'img_url' : img_url,
         'title' : title
         }
@@ -125,13 +120,11 @@ def mars_hemispheres(browser):
         hemisphere_image_urls.append(hemispheres)
         browser.back()
         
-        ## browser.quit()
-    return img_url, title, hemisphere_image_urls
-
-
-
+    hemisphere_image_urls
+    browser.quit()
+    return img_url, title
 
 if __name__ == "__main__":
 
-     # If running as script, print scraped data
+    # If running as script, print scraped data
     print(scrape_all())
